@@ -1,9 +1,79 @@
-@import 'tailwindcss';
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
+:root {
+    --admin-sidebar-width: 260px;
+}
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+body {
+    background-color: #f5f6f8;
+}
+
+.admin-wrapper {
+    min-height: 100vh;
+}
+
+.admin-sidebar {
+    width: var(--admin-sidebar-width);
+    min-width: var(--admin-sidebar-width);
+    min-height: 100vh;
+}
+
+.admin-main {
+    min-width: 0;
+}
+
+.admin-sidebar .nav-link {
+    color: rgba(255, 255, 255, 0.75);
+    border-radius: 0.5rem;
+    padding: 0.7rem 0.85rem;
+    transition: all 0.15s ease-in-out;
+}
+
+.admin-sidebar .nav-link:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.admin-sidebar .nav-link.active {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.admin-sidebar .nav-link i {
+    width: 1.25rem;
+    text-align: center;
+}
+
+.admin-brand {
+    min-height: 72px;
+}
+
+.admin-header {
+    min-height: 72px;
+}
+
+.admin-page-content {
+    min-height: calc(100vh - 144px);
+}
+
+.admin-card {
+    border: 0;
+    box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.06);
+}
+
+@media (max-width: 991.98px) {
+
+    .admin-sidebar-desktop {
+        display: none !important;
+    }
+
+}
+
+@media (min-width: 992px) {
+
+    .admin-mobile-sidebar {
+        display: none !important;
+    }
+
 }
