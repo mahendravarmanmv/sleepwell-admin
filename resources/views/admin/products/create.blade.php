@@ -1,17 +1,17 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Create Category')
+@section('title', 'Create Product')
 
-@section('page_heading', 'Create Category')
+@section('page_heading', 'Create Product')
 
 @section('breadcrumb')
 
     <li class="breadcrumb-item">
         <a
-            href="{{ route('admin.categories.index') }}"
+            href="{{ route('admin.products.index') }}"
             class="text-decoration-none"
         >
-            Categories
+            Products
         </a>
     </li>
 
@@ -26,11 +26,11 @@
     <div class="mb-4">
 
         <h1 class="h3 mb-1">
-            Create Category
+            Create Product
         </h1>
 
         <p class="text-muted mb-0">
-            Add a new SleepWell category.
+            Add a new product to the SleepWell catalog.
         </p>
 
     </div>
@@ -38,16 +38,16 @@
 
     <form
         method="POST"
-        action="{{ route('admin.categories.store') }}"
+        action="{{ route('admin.products.store') }}"
     >
 
         @csrf
 
         @php
-            $submitLabel = 'Create Category';
+            $submitLabel = 'Create Product';
         @endphp
 
-        @include('admin.categories._form')
+        @include('admin.products._form')
 
     </form>
 

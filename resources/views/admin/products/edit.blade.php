@@ -1,17 +1,17 @@
 @extends('admin.layouts.app')
 
-@section('title', 'Edit Category')
+@section('title', 'Edit Product')
 
-@section('page_heading', 'Edit Category')
+@section('page_heading', 'Edit Product')
 
 @section('breadcrumb')
 
     <li class="breadcrumb-item">
         <a
-            href="{{ route('admin.categories.index') }}"
+            href="{{ route('admin.products.index') }}"
             class="text-decoration-none"
         >
-            Categories
+            Products
         </a>
     </li>
 
@@ -23,32 +23,56 @@
 
 @section('content')
 
-    <div class="mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
 
-        <h1 class="h3 mb-1">
-            Edit Category
-        </h1>
+        <div>
 
-        <p class="text-muted mb-0">
-            Update {{ $category->name }}.
-        </p>
+            <h1 class="h3 mb-1">
+                Edit Product
+            </h1>
+
+            <p class="text-muted mb-0">
+                Update {{ $product->title }}.
+            </p>
+
+        </div>
+
+		<div class="d-flex flex-wrap gap-2">
+
+		<a
+		href="{{ route('admin.products.gallery.index', $product) }}"
+		class="btn btn-outline-primary"
+		>
+		<i class="bi bi-images me-1"></i>
+		Gallery
+		</a>
+
+		<a
+		href="{{ route('admin.products.show', $product) }}"
+		class="btn btn-outline-secondary"
+		>
+		<i class="bi bi-eye me-1"></i>
+		View Product
+		</a>
+
+		</div>
 
     </div>
 
 
     <form
         method="POST"
-        action="{{ route('admin.categories.update', $category) }}"
+        action="{{ route('admin.products.update', $product) }}"
     >
 
         @csrf
         @method('PUT')
 
         @php
-            $submitLabel = 'Update Category';
+            $submitLabel = 'Update Product';
         @endphp
 
-        @include('admin.categories._form')
+        @include('admin.products._form')
 
     </form>
 

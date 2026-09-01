@@ -9,7 +9,7 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class ProductController extends Controller
@@ -21,10 +21,10 @@ class ProductController extends Controller
         $products = Product::query()
             ->with('category')
             ->withCount([
-				'galleryImages',
-				'packages',
-				'warranties',
-				'dealers',
+                'galleryImages',
+                'packages',
+                'warranties',
+                'dealers',
             ])
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
@@ -62,10 +62,12 @@ class ProductController extends Controller
             $data['key_features'] ?? []
         );
 
-        Product::create($data);
+        $product = DB::transaction(function () use ($data) {
+            return Product::create($data);
+        });
 
         return redirect()
-            ->route('admin.products.index')
+            ->route('admin.products.edit', $product)
             ->with('success', 'Product created successfully.');
     }
 
@@ -114,28 +116,30 @@ class ProductController extends Controller
             $data['key_features'] ?? []
         );
 
-        $product->update($data);
+        DB::transaction(function () use ($product, $data) {
+            $product->update($data);
+        });
 
         return redirect()
             ->route('admin.products.edit', $product)
             ->with('success', 'Product updated successfully.');
     }
 
-	public function destroy(Product $product): RedirectResponse
-	{
-	if ($product->orderItems()->exists()) {
-		return back()->with(
-			'error',
-			'This product cannot be deleted because it has order history.'
-		);
-	}
+    public function destroy(Product $product): RedirectResponse
+    {
+        if ($product->orderItems()->exists()) {
+            return back()->with(
+                'error',
+                'This product cannot be deleted because it has order history.'
+            );
+        }
 
-	$product->delete();
+        $product->delete();
 
-	return redirect()
-		->route('admin.products.index')
-		->with('success', 'Product deleted successfully.');
-	}
+        return redirect()
+            ->route('admin.products.index')
+            ->with('success', 'Product deleted successfully.');
+    }
 
     private function cleanKeyFeatures(array $features): array
     {

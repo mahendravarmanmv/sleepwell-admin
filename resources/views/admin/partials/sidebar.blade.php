@@ -51,13 +51,13 @@
 			Categories
 			</a>
 
-            <a
-                href="#"
-                class="nav-link"
-            >
-                <i class="bi bi-box-seam me-2"></i>
-                Products
-            </a>
+			<a
+			href="{{ route('admin.products.index') }}"
+			class="nav-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}"
+			>
+			<i class="bi bi-box-seam me-2"></i>
+			Products
+			</a>
 
 			<a
 			href="{{ route('admin.dealers.index') }}"

@@ -1,22 +1,22 @@
 @extends('admin.layouts.app')
 
-@section('title', $category->name)
+@section('title', $product->title)
 
-@section('page_heading', 'Category Details')
+@section('page_heading', 'Product Details')
 
 @section('breadcrumb')
 
     <li class="breadcrumb-item">
         <a
-            href="{{ route('admin.categories.index') }}"
+            href="{{ route('admin.products.index') }}"
             class="text-decoration-none"
         >
-            Categories
+            Products
         </a>
     </li>
 
     <li class="breadcrumb-item active">
-        {{ $category->name }}
+        {{ $product->title }}
     </li>
 
 @endsection
@@ -28,47 +28,57 @@
         <div>
 
             <h1 class="h3 mb-1">
-                {{ $category->name }}
+                {{ $product->title }}
             </h1>
 
             <p class="text-muted mb-0">
-                Category #{{ $category->id }}
+                Product #{{ $product->id }}
             </p>
 
         </div>
 
-        <div class="d-flex gap-2">
+		<div class="d-flex flex-wrap gap-2">
 
-            <a
-                href="{{ route('admin.categories.edit', $category) }}"
-                class="btn btn-primary"
-            >
-                <i class="bi bi-pencil me-1"></i>
-                Edit
-            </a>
+		<a
+		href="{{ route('admin.products.gallery.index', $product) }}"
+		class="btn btn-outline-primary"
+		>
+		<i class="bi bi-images me-1"></i>
+		Manage Gallery
+		</a>
 
-            <a
-                href="{{ route('admin.categories.index') }}"
-                class="btn btn-outline-secondary"
-            >
-                Back
-            </a>
+		<a
+		href="{{ route('admin.products.edit', $product) }}"
+		class="btn btn-primary"
+		>
+		<i class="bi bi-pencil me-1"></i>
+		Edit
+		</a>
 
-        </div>
+		<a
+		href="{{ route('admin.products.index') }}"
+		class="btn btn-outline-secondary"
+		>
+		Back
+		</a>
+
+		</div>
 
     </div>
 
 
     <div class="row g-4">
 
-        <div class="col-lg-6">
+        <div class="col-lg-8">
 
-            <div class="card admin-card h-100">
+            <div class="card admin-card mb-4">
 
-                <div class="card-header bg-white">
-                    <h6 class="mb-0">
-                        Category Information
+                <div class="card-header bg-white py-3">
+
+                    <h6 class="mb-0 fw-semibold">
+                        Product Information
                     </h6>
+
                 </div>
 
                 <div class="card-body">
@@ -76,11 +86,20 @@
                     <dl class="row mb-0">
 
                         <dt class="col-sm-4">
-                            Name
+                            Title
                         </dt>
 
                         <dd class="col-sm-8">
-                            {{ $category->name }}
+                            {{ $product->title }}
+                        </dd>
+
+
+                        <dt class="col-sm-4">
+                            Category
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            {{ $product->category?->name ?? '—' }}
                         </dd>
 
 
@@ -89,59 +108,57 @@
                         </dt>
 
                         <dd class="col-sm-8">
-                            <code>{{ $category->slug }}</code>
+                            <code>{{ $product->slug }}</code>
                         </dd>
 
 
                         <dt class="col-sm-4">
-                            Icon
+                            Base Price
                         </dt>
 
                         <dd class="col-sm-8">
-                            <i class="bi {{ $category->icon_class }} me-1"></i>
-                            {{ $category->icon_class }}
+                            ₹{{ number_format($product->price, 2) }}
                         </dd>
 
 
                         <dt class="col-sm-4">
-                            Parent
+                            EMI Starting
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            ₹{{ number_format($product->emi_starting_price ?? 0) }}
+                        </dd>
+
+
+                        <dt class="col-sm-4">
+                            Stock
+                        </dt>
+
+                        <dd class="col-sm-8">
+                            {{ $product->stock_quantity }}
+                        </dd>
+
+
+                        <dt class="col-sm-4">
+                            Status
                         </dt>
 
                         <dd class="col-sm-8">
 
-                            @if ($category->parent)
+                            @if ($product->is_active)
 
-                                <a
-                                    href="{{ route('admin.categories.show', $category->parent) }}"
-                                    class="text-decoration-none"
-                                >
-                                    {{ $category->parent->name }}
-                                </a>
+                                <span class="badge text-bg-success">
+                                    Active
+                                </span>
 
                             @else
 
-                                Main category
+                                <span class="badge text-bg-secondary">
+                                    Inactive
+                                </span>
 
                             @endif
 
-                        </dd>
-
-
-                        <dt class="col-sm-4">
-                            Created
-                        </dt>
-
-                        <dd class="col-sm-8">
-                            {{ $category->created_at?->format('d M Y, h:i A') }}
-                        </dd>
-
-
-                        <dt class="col-sm-4">
-                            Updated
-                        </dt>
-
-                        <dd class="col-sm-8">
-                            {{ $category->updated_at?->format('d M Y, h:i A') }}
                         </dd>
 
                     </dl>
@@ -150,57 +167,175 @@
 
             </div>
 
-        </div>
 
+            <div class="card admin-card mb-4">
 
-        <div class="col-lg-6">
+                <div class="card-header bg-white py-3">
 
-            <div class="card admin-card h-100">
-
-                <div class="card-header bg-white">
-
-                    <h6 class="mb-0">
-                        Subcategories
+                    <h6 class="mb-0 fw-semibold">
+                        Description
                     </h6>
 
                 </div>
 
                 <div class="card-body">
 
-                    @if ($category->subcategories->count())
+                    @if ($product->description)
 
-                        <div class="list-group list-group-flush">
-
-                            @foreach ($category->subcategories as $subcategory)
-
-                                <a
-                                    href="{{ route('admin.categories.show', $subcategory) }}"
-                                    class="list-group-item list-group-item-action px-0 d-flex justify-content-between align-items-center"
-                                >
-
-                                    <span>
-
-                                        <i class="bi {{ $subcategory->icon_class }} me-2"></i>
-
-                                        {{ $subcategory->name }}
-
-                                    </span>
-
-                                    <i class="bi bi-chevron-right small"></i>
-
-                                </a>
-
-                            @endforeach
-
-                        </div>
+                        {!! nl2br(e($product->description)) !!}
 
                     @else
 
-                        <div class="text-muted">
-                            This category has no subcategories.
+                        <span class="text-muted">
+                            No description available.
+                        </span>
+
+                    @endif
+
+                </div>
+
+            </div>
+
+
+            <div class="card admin-card">
+
+                <div class="card-header bg-white py-3">
+
+                    <h6 class="mb-0 fw-semibold">
+                        Key Features
+                    </h6>
+
+                </div>
+
+                <div class="card-body">
+
+                    @if (count($product->key_features ?? []))
+
+                        <ul class="mb-0">
+
+                            @foreach ($product->key_features as $feature)
+
+                                <li class="mb-2">
+                                    {{ $feature }}
+                                </li>
+
+                            @endforeach
+
+                        </ul>
+
+                    @else
+
+                        <span class="text-muted">
+                            No key features configured.
+                        </span>
+
+                    @endif
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-lg-4">
+
+            <div class="card admin-card mb-4">
+
+                <div class="card-header bg-white py-3">
+
+                    <h6 class="mb-0 fw-semibold">
+                        Main Image
+                    </h6>
+
+                </div>
+
+                <div class="card-body text-center">
+
+                    @if ($product->image_url)
+
+                        <img
+                            src="{{ $product->image_url }}"
+                            alt="{{ $product->title }}"
+                            class="img-fluid rounded"
+                        >
+
+                    @else
+
+                        <div class="py-5 text-muted">
+                            <i class="bi bi-image display-5"></i>
+
+                            <div class="mt-2">
+                                No main image.
+                            </div>
                         </div>
 
                     @endif
+
+                </div>
+
+            </div>
+
+
+            <div class="card admin-card">
+
+                <div class="card-header bg-white py-3">
+
+                    <h6 class="mb-0 fw-semibold">
+                        Product Components
+                    </h6>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between mb-3">
+
+                        <span>
+                            Gallery Images
+                        </span>
+
+                        <strong>
+                            {{ $product->galleryImages->count() }}
+                        </strong>
+
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-3">
+
+                        <span>
+                            Packages
+                        </span>
+
+                        <strong>
+                            {{ $product->packages->count() }}
+                        </strong>
+
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-3">
+
+                        <span>
+                            Warranties
+                        </span>
+
+                        <strong>
+                            {{ $product->warranties->count() }}
+                        </strong>
+
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+
+                        <span>
+                            Dealers
+                        </span>
+
+                        <strong>
+                            {{ $product->dealers->count() }}
+                        </strong>
+
+                    </div>
 
                 </div>
 
