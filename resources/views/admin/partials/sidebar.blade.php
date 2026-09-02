@@ -108,16 +108,33 @@
                 <i class="bi bi-credit-card me-2"></i>
                 Payments
             </a>
-			
-			<a href="{{ route('admin.notifications.index') }}"
-			class="nav-link">
-			Notifications
-			</a>
-			
-			<a href="{{ route('admin.reports.index') }}"
-   class="nav-link">
-    Reports
-</a>
+
+
+            <a
+                href="{{ route('admin.notifications.index') }}"
+                class="nav-link {{ request()->routeIs('admin.notifications.*') ? 'active' : '' }}"
+            >
+                <i class="bi bi-bell me-2"></i>
+                Notifications
+            </a>
+
+        </nav>
+
+
+        {{-- Analytics --}}
+        <div class="text-uppercase small text-white-50 fw-semibold mt-4 mb-2 px-2">
+            Analytics
+        </div>
+
+        <nav class="nav flex-column gap-1">
+
+            <a
+                href="{{ route('admin.reports.index') }}"
+                class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}"
+            >
+                <i class="bi bi-bar-chart me-2"></i>
+                Reports
+            </a>
 
         </nav>
 
@@ -128,16 +145,6 @@
         </div>
 
         <nav class="nav flex-column gap-1">
-
-            {{-- Reports --}}
-            <a
-                href="#"
-                class="nav-link text-white-50"
-            >
-                <i class="bi bi-bar-chart me-2"></i>
-                Reports
-            </a>
-
 
             {{-- Settings --}}
             <a

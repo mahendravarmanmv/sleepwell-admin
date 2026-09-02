@@ -256,13 +256,42 @@ Route::prefix('admin')->name('admin.')->group(function () {
             'orders/{order}/payment',
             [OrderPaymentController::class, 'update']
         )->name('orders.payment.update');
-		
-		Route::get('payments', [PaymentController::class, 'index'])->name('payments.index');
-		
-		Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
-		
-		Route::get('reports', [ReportController::class, 'index'])
-    ->name('reports.index');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Payments
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get(
+            'payments',
+            [PaymentController::class, 'index']
+        )->name('payments.index');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Notifications
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get(
+            'notifications',
+            [NotificationController::class, 'index']
+        )->name('notifications.index');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Reports
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get(
+            'reports',
+            [ReportController::class, 'index']
+        )->name('reports.index');
 
     });
 
