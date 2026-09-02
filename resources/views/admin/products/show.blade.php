@@ -46,6 +46,30 @@
 		<i class="bi bi-images me-1"></i>
 		Manage Gallery
 		</a>
+		
+		<a
+		href="{{ route('admin.products.packages.index', $product) }}"
+		class="btn btn-outline-primary"
+		>
+		<i class="bi bi-box me-1"></i>
+		Manage Packages
+		</a>
+		
+		<a
+		href="{{ route('admin.products.warranties.index', $product) }}"
+		class="btn btn-outline-primary"
+		>
+		<i class="bi bi-shield-check me-1"></i>
+		Manage Warranties
+		</a>
+		
+		<a
+		href="{{ route('admin.products.dealers.index', $product) }}"
+		class="btn btn-outline-primary"
+		>
+		<i class="bi bi-shop me-1"></i>
+		Manage Dealers
+		</a>
 
 		<a
 		href="{{ route('admin.products.edit', $product) }}"
@@ -289,55 +313,106 @@
 
                 <div class="card-body">
 
-                    <div class="d-flex justify-content-between mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
 
-                        <span>
-                            Gallery Images
-                        </span>
+        <span>
+            <i class="bi bi-images me-2 text-primary"></i>
+            Gallery Images
+        </span>
 
-                        <strong>
-                            {{ $product->galleryImages->count() }}
-                        </strong>
+        <div class="d-flex align-items-center gap-2">
 
-                    </div>
+            <strong>
+                {{ $product->galleryImages->count() }}
+            </strong>
 
-                    <div class="d-flex justify-content-between mb-3">
+            <a
+                href="{{ route('admin.products.gallery.index', $product) }}"
+                class="btn btn-sm btn-outline-primary"
+            >
+                Manage
+            </a>
 
-                        <span>
-                            Packages
-                        </span>
+        </div>
 
-                        <strong>
-                            {{ $product->packages->count() }}
-                        </strong>
+    </div>
 
-                    </div>
 
-                    <div class="d-flex justify-content-between mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
 
-                        <span>
-                            Warranties
-                        </span>
+        <span>
+            <i class="bi bi-box me-2 text-primary"></i>
+            Packages
+        </span>
 
-                        <strong>
-                            {{ $product->warranties->count() }}
-                        </strong>
+        <div class="d-flex align-items-center gap-2">
 
-                    </div>
+            <strong>
+                {{ $product->packages->count() }}
+            </strong>
 
-                    <div class="d-flex justify-content-between">
+            <a
+                href="{{ route('admin.products.packages.index', $product) }}"
+                class="btn btn-sm btn-outline-primary"
+            >
+                Manage
+            </a>
 
-                        <span>
-                            Dealers
-                        </span>
+        </div>
 
-                        <strong>
-                            {{ $product->dealers->count() }}
-                        </strong>
+    </div>
 
-                    </div>
 
-                </div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <span>
+            <i class="bi bi-shield-check me-2 text-primary"></i>
+            Warranties
+        </span>
+
+        <div class="d-flex align-items-center gap-2">
+
+            <strong>
+                {{ $product->warranties->count() }}
+            </strong>
+
+            <a
+                href="{{ route('admin.products.warranties.index', $product) }}"
+                class="btn btn-sm btn-outline-primary"
+            >
+                Manage
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="d-flex justify-content-between align-items-center">
+
+        <span>
+            <i class="bi bi-shop me-2 text-primary"></i>
+            Dealers
+        </span>
+
+        <div class="d-flex align-items-center gap-2">
+
+            <strong>
+                {{ $product->dealers->count() }}
+            </strong>
+
+			<a
+			href="{{ route('admin.products.dealers.index', $product) }}"
+			class="btn btn-sm btn-outline-primary"
+			>
+			Manage
+			</a>
+
+        </div>
+
+    </div>
+
+</div>
 
             </div>
 

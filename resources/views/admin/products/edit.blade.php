@@ -39,23 +39,47 @@
 
 		<div class="d-flex flex-wrap gap-2">
 
-		<a
-		href="{{ route('admin.products.gallery.index', $product) }}"
-		class="btn btn-outline-primary"
-		>
-		<i class="bi bi-images me-1"></i>
-		Gallery
-		</a>
+    <a
+        href="{{ route('admin.products.gallery.index', $product) }}"
+        class="btn btn-outline-primary"
+    >
+        <i class="bi bi-images me-1"></i>
+        Gallery
+    </a>
 
-		<a
-		href="{{ route('admin.products.show', $product) }}"
-		class="btn btn-outline-secondary"
-		>
-		<i class="bi bi-eye me-1"></i>
-		View Product
-		</a>
+    <a
+        href="{{ route('admin.products.packages.index', $product) }}"
+        class="btn btn-outline-primary"
+    >
+        <i class="bi bi-box me-1"></i>
+        Packages
+    </a>
 
-		</div>
+    <a
+        href="{{ route('admin.products.warranties.index', $product) }}"
+        class="btn btn-outline-primary"
+    >
+        <i class="bi bi-shield-check me-1"></i>
+        Warranties
+    </a>
+
+    <a
+        href="{{ route('admin.products.dealers.index', $product) }}"
+        class="btn btn-outline-primary"
+    >
+        <i class="bi bi-shop me-1"></i>
+        Dealers
+    </a>
+
+    <a
+        href="{{ route('admin.products.show', $product) }}"
+        class="btn btn-outline-secondary"
+    >
+        <i class="bi bi-eye me-1"></i>
+        View Product
+    </a>
+
+</div>
 
     </div>
 
