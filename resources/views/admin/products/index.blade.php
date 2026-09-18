@@ -39,6 +39,10 @@
     </div>
 
 
+    {{-- ========================================================= --}}
+    {{-- SEARCH --}}
+    {{-- ========================================================= --}}
+
     <div class="card admin-card mb-4">
 
         <div class="card-body">
@@ -94,6 +98,10 @@
     </div>
 
 
+    {{-- ========================================================= --}}
+    {{-- PRODUCTS --}}
+    {{-- ========================================================= --}}
+
     <div class="card admin-card">
 
         <div class="card-body p-0">
@@ -140,11 +148,16 @@
 
                         </thead>
 
+
                         <tbody>
 
                             @foreach ($products as $product)
 
                                 <tr>
+
+                                    {{-- ================================================= --}}
+                                    {{-- PRODUCT --}}
+                                    {{-- ================================================= --}}
 
                                     <td class="ps-4">
 
@@ -153,7 +166,7 @@
                                             @if ($product->image_url)
 
                                                 <img
-                                                    src="{{ $product->image_url }}"
+                                                    src="{{ config('sleepwell.frontend_url') . $product->image_url }}"
                                                     alt="{{ $product->title }}"
                                                     class="rounded object-fit-cover"
                                                     width="52"
@@ -170,6 +183,7 @@
                                                 </span>
 
                                             @endif
+
 
                                             <div>
 
@@ -190,13 +204,28 @@
 
                                     </td>
 
+
+                                    {{-- ================================================= --}}
+                                    {{-- CATEGORY --}}
+                                    {{-- ================================================= --}}
+
                                     <td>
                                         {{ $product->category?->name ?? '—' }}
                                     </td>
 
+
+                                    {{-- ================================================= --}}
+                                    {{-- PRICE --}}
+                                    {{-- ================================================= --}}
+
                                     <td>
                                         ₹{{ number_format($product->price, 2) }}
                                     </td>
+
+
+                                    {{-- ================================================= --}}
+                                    {{-- STOCK --}}
+                                    {{-- ================================================= --}}
 
                                     <td>
 
@@ -216,6 +245,11 @@
 
                                     </td>
 
+
+                                    {{-- ================================================= --}}
+                                    {{-- STATUS --}}
+                                    {{-- ================================================= --}}
+
                                     <td>
 
                                         @if ($product->is_active)
@@ -233,6 +267,11 @@
                                         @endif
 
                                     </td>
+
+
+                                    {{-- ================================================= --}}
+                                    {{-- RELATED --}}
+                                    {{-- ================================================= --}}
 
                                     <td>
 
@@ -262,68 +301,62 @@
 
                                     </td>
 
+
+                                    {{-- ================================================= --}}
+                                    {{-- ACTIONS --}}
+                                    {{-- ================================================= --}}
+
                                     <td class="text-end pe-4">
 
-                                        <div class="dropdown">
+                                        <div
+                                            class="btn-group"
+                                            role="group"
+                                            aria-label="Product actions"
+                                        >
 
-                                            <button
-                                                class="btn btn-sm btn-light"
-                                                type="button"
-                                                data-bs-toggle="dropdown"
+                                            {{-- View --}}
+                                            <a
+                                                href="{{ route('admin.products.show', $product) }}"
+                                                class="btn btn-sm btn-outline-primary"
+                                                title="View Product"
+                                                aria-label="View Product"
                                             >
-                                                <i class="bi bi-three-dots-vertical"></i>
-                                            </button>
+                                                <i class="bi bi-eye"></i>
+                                            </a>
 
-                                            <ul class="dropdown-menu dropdown-menu-end">
 
-                                                <li>
-                                                    <a
-                                                        href="{{ route('admin.products.show', $product) }}"
-                                                        class="dropdown-item"
-                                                    >
-                                                        <i class="bi bi-eye me-2"></i>
-                                                        View
-                                                    </a>
-                                                </li>
+                                            {{-- Edit --}}
+                                            <a
+                                                href="{{ route('admin.products.edit', $product) }}"
+                                                class="btn btn-sm btn-outline-secondary"
+                                                title="Edit Product"
+                                                aria-label="Edit Product"
+                                            >
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
 
-                                                <li>
-                                                    <a
-                                                        href="{{ route('admin.products.edit', $product) }}"
-                                                        class="dropdown-item"
-                                                    >
-                                                        <i class="bi bi-pencil me-2"></i>
-                                                        Edit
-                                                    </a>
-                                                </li>
 
-                                                <li>
-                                                    <hr class="dropdown-divider">
-                                                </li>
+                                            {{-- Delete --}}
+                                            <form
+                                                method="POST"
+                                                action="{{ route('admin.products.destroy', $product) }}"
+                                                class="d-inline"
+                                                onsubmit="return confirm('Are you sure you want to delete this product?');"
+                                            >
 
-                                                <li>
+                                                @csrf
+                                                @method('DELETE')
 
-                                                    <form
-                                                        method="POST"
-                                                        action="{{ route('admin.products.destroy', $product) }}"
-                                                        onsubmit="return confirm('Are you sure you want to delete this product?');"
-                                                    >
+                                                <button
+                                                    type="submit"
+                                                    class="btn btn-sm btn-outline-danger"
+                                                    title="Delete Product"
+                                                    aria-label="Delete Product"
+                                                >
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
 
-                                                        @csrf
-                                                        @method('DELETE')
-
-                                                        <button
-                                                            type="submit"
-                                                            class="dropdown-item text-danger"
-                                                        >
-                                                            <i class="bi bi-trash me-2"></i>
-                                                            Delete
-                                                        </button>
-
-                                                    </form>
-
-                                                </li>
-
-                                            </ul>
+                                            </form>
 
                                         </div>
 
@@ -340,6 +373,10 @@
                 </div>
 
 
+                {{-- ================================================= --}}
+                {{-- PAGINATION --}}
+                {{-- ================================================= --}}
+
                 <div class="p-3 border-top">
 
                     {{ $products->links() }}
@@ -347,6 +384,10 @@
                 </div>
 
             @else
+
+                {{-- ================================================= --}}
+                {{-- NO PRODUCTS --}}
+                {{-- ================================================= --}}
 
                 <div class="text-center py-5">
 
@@ -357,11 +398,17 @@
                     </h5>
 
                     <p class="text-muted">
+
                         @if ($search !== '')
+
                             No products match your search.
+
                         @else
+
                             No products have been created yet.
+
                         @endif
+
                     </p>
 
                 </div>

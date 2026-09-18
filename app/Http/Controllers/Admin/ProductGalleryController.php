@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\ProductImage;
@@ -21,87 +23,138 @@ class ProductGalleryController extends Controller
         ));
     }
 
-    public function store(
-        Request $request,
-        Product $product
-    ): RedirectResponse {
-        $validated = $request->validate([
-            'image_url' => [
-                'required',
-                'string',
-                'max:255',
-            ],
+	public function store(Request $request, Product $product): RedirectResponse
+	{
+	$validated = $request->validate([
+	'image_url' => ['nullable', 'string', 'max:255'],
+	'image_file' => [
+		'nullable',
+		'image',
+		'mimes:jpg,jpeg,png,webp',
+		'max:2048',
+	],
+	'sort_order' => ['nullable', 'integer', 'min:0'],
+	]);
 
-            'sort_order' => [
-                'nullable',
-                'integer',
-                'min:0',
-            ],
-        ]);
+	if (
+	empty($validated['image_url']) &&
+	!$request->hasFile('image_file')
+	) {
+	return back()
+		->withErrors([
+			'image_url' => 'Please enter an image URL/path or upload an image.',
+		])
+		->withInput();
+	}
 
-        $sortOrder = $validated['sort_order']
-            ?? ((int) $product->galleryImages()->max('sort_order') + 1);
+	$imageUrl = $validated['image_url'] ?? null;
 
-        ProductImage::create([
-            'product_id' => $product->id,
-            'image_url' => trim($validated['image_url']),
-            'sort_order' => $sortOrder,
-        ]);
+	if ($request->hasFile('image_file')) {
+	$imageUrl = $this->storeGalleryImage(
+		$request->file('image_file')
+	);
+	}
 
-        return redirect()
-            ->route('admin.products.gallery.index', $product)
-            ->with('success', 'Gallery image added successfully.');
-    }
+	$sortOrder = $validated['sort_order']
+	?? ((int) $product->galleryImages()->max('sort_order') + 1);
+
+	ProductImage::create([
+	'product_id' => $product->id,
+	'image_url' => $imageUrl,
+	'sort_order' => $sortOrder,
+	]);
+
+	return redirect()
+	->route('admin.products.gallery.index', $product)
+	->with('success', 'Gallery image added successfully.');
+	}
 
     public function update(
-        Request $request,
-        Product $product,
-        ProductImage $image
-    ): RedirectResponse {
-        $this->ensureImageBelongsToProduct(
-            $product,
-            $image
-        );
+    Request $request,
+    Product $product,
+    ProductImage $image
+): RedirectResponse {
+    $this->ensureImageBelongsToProduct($product, $image);
 
-        $validated = $request->validate([
-            'image_url' => [
-                'required',
-                'string',
-                'max:255',
-            ],
+    $validated = $request->validate([
+        'image_url' => ['nullable', 'string', 'max:255'],
+        'image_file' => [
+            'nullable',
+            'image',
+            'mimes:jpg,jpeg,png,webp',
+            'max:2048',
+        ],
+        'sort_order' => ['required', 'integer', 'min:0'],
+    ]);
 
-            'sort_order' => [
-                'required',
-                'integer',
-                'min:0',
-            ],
-        ]);
-
-        $image->update([
-            'image_url' => trim($validated['image_url']),
-            'sort_order' => $validated['sort_order'],
-        ]);
-
-        return redirect()
-            ->route('admin.products.gallery.index', $product)
-            ->with('success', 'Gallery image updated successfully.');
+    if (
+        empty($validated['image_url']) &&
+        !$request->hasFile('image_file')
+    ) {
+        return back()
+            ->withErrors([
+                'image_url' => 'Please enter an image URL/path or upload an image.',
+            ])
+            ->withInput();
     }
 
-    public function destroy(
-        Product $product,
-        ProductImage $image
-    ): RedirectResponse {
-        $this->ensureImageBelongsToProduct(
-            $product,
-            $image
+    $oldImage = $image->image_url;
+
+    $imageUrl = $validated['image_url'] ?? null;
+
+    if ($request->hasFile('image_file')) {
+        $imageUrl = $this->storeGalleryImage(
+            $request->file('image_file')
         );
-
-        $image->delete();
-
-        return redirect()
-            ->route('admin.products.gallery.index', $product)
-            ->with('success', 'Gallery image removed successfully.');
     }
+
+    $image->update([
+        'image_url' => $imageUrl,
+        'sort_order' => $validated['sort_order'],
+    ]);
+
+    if (
+        $request->hasFile('image_file') &&
+        $oldImage &&
+        str_starts_with($oldImage, '/images/products/')
+    ) {
+        $oldImagePath = config('sleepwell.frontend_public_path') . $oldImage;
+
+        if (is_file($oldImagePath)) {
+            @unlink($oldImagePath);
+        }
+    }
+
+    return redirect()
+        ->route('admin.products.gallery.index', $product)
+        ->with('success', 'Gallery image updated successfully.');
+}
+
+	public function destroy(
+	Product $product,
+	ProductImage $image
+	): RedirectResponse {
+	$this->ensureImageBelongsToProduct($product, $image);
+
+	$imageUrl = $image->image_url;
+
+	$image->delete();
+
+	if (
+		$imageUrl &&
+		str_starts_with($imageUrl, '/images/products/')
+	) {
+		$imagePath = config('sleepwell.frontend_public_path') . $imageUrl;
+
+		if (is_file($imagePath)) {
+			@unlink($imagePath);
+		}
+	}
+
+	return redirect()
+		->route('admin.products.gallery.index', $product)
+		->with('success', 'Gallery image deleted successfully.');
+	}
 
     private function ensureImageBelongsToProduct(
         Product $product,
@@ -112,4 +165,15 @@ class ProductGalleryController extends Controller
             404
         );
     }
+	
+	private function storeGalleryImage(UploadedFile $file): string
+	{
+	$directory = config('sleepwell.product_images_path');
+
+	$filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+
+	$file->move($directory, $filename);
+
+	return '/images/products/' . $filename;
+	}
 }

@@ -37,9 +37,9 @@
 
 
     <form
-        method="POST"
-        action="{{ route('admin.products.store') }}"
-    >
+    method="POST"
+    action="{{ route('admin.products.store') }}"
+    enctype="multipart/form-data">
 
         @csrf
 

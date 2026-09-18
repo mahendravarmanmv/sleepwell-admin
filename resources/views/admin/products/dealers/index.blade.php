@@ -21,21 +21,6 @@
     </div>
 
 
-    {{-- Success Message --}}
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-
-            <button type="button"
-                    class="close"
-                    data-dismiss="alert"
-                    aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
-
-
     {{-- Validation Errors --}}
     @if($errors->any())
         <div class="alert alert-danger">
@@ -228,24 +213,24 @@
                                     </td>
 
 
-                                    {{-- Verification --}}
-                                    <td>
+									{{-- Verification --}}
+									<td>
 
-                                        @if($dealer->is_verified)
+									@if($dealer->is_verified)
 
-                                            <span class="badge badge-success">
-                                                Verified
-                                            </span>
+									<span class="badge bg-success">
+									Verified
+									</span>
 
-                                        @else
+									@else
 
-                                            <span class="badge badge-secondary">
-                                                Unverified
-                                            </span>
+									<span class="badge bg-secondary">
+									Unverified
+									</span>
 
-                                        @endif
+									@endif
 
-                                    </td>
+									</td>
 
 
                                     {{-- Dealer Price --}}

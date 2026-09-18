@@ -81,41 +81,68 @@
 
         <div class="card-body">
 
-            <form
-                method="POST"
-                action="{{ route('admin.products.gallery.store', $product) }}"
-            >
+		<form
+		method="POST"
+		action="{{ route('admin.products.gallery.store', $product) }}"
+		enctype="multipart/form-data"
+		>
 
                 @csrf
 
                 <div class="row g-3 align-items-end">
 
-                    <div class="col-lg-8">
+                    <div class="col-lg-5">
 
-                        <label
-                            for="image_url"
-                            class="form-label fw-semibold"
-                        >
-                            Image URL / Path
-                        </label>
+    <label
+        for="image_url"
+        class="form-label fw-semibold"
+    >
+        Image URL / Path
+    </label>
 
-                        <input
-                            type="text"
-                            name="image_url"
-                            id="image_url"
-                            class="form-control @error('image_url') is-invalid @enderror"
-                            value="{{ old('image_url') }}"
-                            placeholder="/images/products/gallery/image.jpg"
-                            required
-                        >
+    <input
+        type="text"
+        name="image_url"
+        id="image_url"
+        class="form-control @error('image_url') is-invalid @enderror"
+        value="{{ old('image_url') }}"
+        maxlength="255"
+        placeholder="/images/products/gallery/image.jpg"
+    >
 
-                        @error('image_url')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
+    @error('image_url')
+        <div class="invalid-feedback">
+            {{ $message }}
+        </div>
+    @enderror
 
-                    </div>
+</div>
+
+
+<div class="col-lg-3">
+
+    <label
+        for="image_file"
+        class="form-label fw-semibold"
+    >
+        Upload Image
+    </label>
+
+    <input
+        type="file"
+        name="image_file"
+        id="image_file"
+        class="form-control @error('image_file') is-invalid @enderror"
+        accept=".jpg,.jpeg,.png,.webp"
+    >
+
+    @error('image_file')
+        <div class="invalid-feedback">
+            {{ $message }}
+        </div>
+    @enderror
+
+</div>
 
 
                     <div class="col-lg-2">
@@ -219,29 +246,66 @@
                                         Image #{{ $image->id }}
                                     </div>
 
-                                    <form
-                                        method="POST"
-                                        action="{{ route('admin.products.gallery.update', [$product, $image]) }}"
-                                    >
+									<form
+									method="POST"
+									action="{{ route('admin.products.gallery.update', [$product, $image]) }}"
+									enctype="multipart/form-data"
+									>
 
                                         @csrf
                                         @method('PUT')
 
                                         <div class="mb-3">
 
-                                            <label class="form-label small fw-semibold">
-                                                Image URL / Path
-                                            </label>
+    <label class="form-label small fw-semibold">
+        Image URL / Path
+    </label>
 
-                                            <input
-                                                type="text"
-                                                name="image_url"
-                                                class="form-control form-control-sm"
-                                                value="{{ $image->image_url }}"
-                                                required
-                                            >
+    <input
+        type="text"
+        name="image_url"
+        class="form-control form-control-sm @error('image_url') is-invalid @enderror"
+        value="{{ old('image_url', $image->image_url) }}"
+        maxlength="255"
+    >
 
-                                        </div>
+    @error('image_url')
+        <div class="invalid-feedback">
+            {{ $message }}
+        </div>
+    @enderror
+
+</div>
+
+
+<div class="mb-3">
+
+    <label
+        for="image_file_{{ $image->id }}"
+        class="form-label small fw-semibold"
+    >
+        Upload Replacement Image
+    </label>
+
+    <input
+        type="file"
+        name="image_file"
+        id="image_file_{{ $image->id }}"
+        class="form-control form-control-sm @error('image_file') is-invalid @enderror"
+        accept=".jpg,.jpeg,.png,.webp"
+    >
+
+    @error('image_file')
+        <div class="invalid-feedback">
+            {{ $message }}
+        </div>
+    @enderror
+
+    <div class="form-text">
+        JPG, JPEG, PNG or WEBP. Maximum size: 2 MB.
+    </div>
+
+</div>
 
 
                                         <div class="mb-3">

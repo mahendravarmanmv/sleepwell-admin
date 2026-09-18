@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreProductRequest;
 use App\Http\Requests\Admin\UpdateProductRequest;
@@ -54,22 +56,30 @@ class ProductController extends Controller
         ));
     }
 
-    public function store(StoreProductRequest $request): RedirectResponse
-    {
-        $data = $request->validated();
+	public function store(StoreProductRequest $request): RedirectResponse
+	{
+	$data = $request->validated();
 
-        $data['key_features'] = $this->cleanKeyFeatures(
-            $data['key_features'] ?? []
-        );
+	$data['key_features'] = $this->cleanKeyFeatures(
+		$data['key_features'] ?? []
+	);
 
-        $product = DB::transaction(function () use ($data) {
-            return Product::create($data);
-        });
+	if ($request->hasFile('image_file')) {
+		$data['image_url'] = $this->storeProductImage(
+			$request->file('image_file')
+		);
+	}
 
-        return redirect()
-            ->route('admin.products.edit', $product)
-            ->with('success', 'Product created successfully.');
-    }
+	unset($data['image_file']);
+
+	$product = DB::transaction(
+		fn () => Product::create($data)
+	);
+
+	return redirect()
+		->route('admin.products.edit', $product)
+		->with('success', 'Product created successfully.');
+	}
 
     public function show(Product $product): View
     {
@@ -106,24 +116,43 @@ class ProductController extends Controller
         ));
     }
 
-    public function update(
-        UpdateProductRequest $request,
-        Product $product
-    ): RedirectResponse {
-        $data = $request->validated();
+    public function update(UpdateProductRequest $request, Product $product): RedirectResponse 
+	{
+    $data = $request->validated();
 
-        $data['key_features'] = $this->cleanKeyFeatures(
-            $data['key_features'] ?? []
+    $data['key_features'] = $this->cleanKeyFeatures(
+        $data['key_features'] ?? []
+    );
+
+    if ($request->hasFile('image_file')) {
+        $oldImage = $product->image_url;
+
+        $data['image_url'] = $this->storeProductImage(
+            $request->file('image_file')
         );
 
-        DB::transaction(function () use ($product, $data) {
-            $product->update($data);
-        });
+        if (
+            $oldImage &&
+            str_starts_with($oldImage, '/images/products/')
+        ) {
+            $oldImagePath = config('sleepwell.frontend_public_path') . $oldImage;
 
-        return redirect()
-            ->route('admin.products.edit', $product)
-            ->with('success', 'Product updated successfully.');
+            if (is_file($oldImagePath)) {
+                @unlink($oldImagePath);
+            }
+        }
     }
+
+    unset($data['image_file']);
+
+    DB::transaction(function () use ($product, $data) {
+        $product->update($data);
+    });
+
+    return redirect()
+        ->route('admin.products.edit', $product)
+        ->with('success', 'Product updated successfully.');
+	}
 
     public function destroy(Product $product): RedirectResponse
     {
@@ -149,4 +178,16 @@ class ProductController extends Controller
             ->values()
             ->all();
     }
+	
+	private function storeProductImage(UploadedFile $file): string
+	{
+	$directory = config('sleepwell.product_images_path');
+
+	$filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+
+	$file->move($directory, $filename);
+
+	return '/images/products/' . $filename;
+	}
+
 }

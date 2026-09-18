@@ -85,6 +85,13 @@ class UpdateProductRequest extends FormRequest
                 'string',
                 'max:255',
             ],
+			
+			'image_file' => [
+			'nullable',
+			'image',
+			'mimes:jpg,jpeg,png,webp',
+			'max:2048',
+			],
 
             'stock_quantity' => [
                 'required',

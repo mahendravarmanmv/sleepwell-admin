@@ -126,30 +126,60 @@
 
                     <div class="col-md-6">
 
-                        <label
-                            for="image_url"
-                            class="form-label fw-semibold"
-                        >
-                            Main Image URL / Path
-                        </label>
+    <label
+        for="image_url"
+        class="form-label fw-semibold"
+    >
+        Main Image URL / Path
+    </label>
 
-                        <input
-                            type="text"
-                            id="image_url"
-                            name="image_url"
-                            class="form-control @error('image_url') is-invalid @enderror"
-                            value="{{ old('image_url', $product->image_url ?? '') }}"
-                            maxlength="255"
-                            placeholder="/images/products/product.jpg"
-                        >
+    <input
+        type="text"
+        id="image_url"
+        name="image_url"
+        class="form-control @error('image_url') is-invalid @enderror"
+        value="{{ old('image_url', $product->image_url ?? '') }}"
+        maxlength="255"
+        placeholder="/images/products/product.jpg"
+    >
 
-                        @error('image_url')
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-                        @enderror
+    @error('image_url')
+        <div class="invalid-feedback">
+            {{ $message }}
+        </div>
+    @enderror
 
-                    </div>
+</div>
+
+
+<div class="col-md-6">
+
+    <label
+        for="image_file"
+        class="form-label fw-semibold"
+    >
+        Upload Main Image
+    </label>
+
+    <input
+        type="file"
+        id="image_file"
+        name="image_file"
+        class="form-control @error('image_file') is-invalid @enderror"
+        accept=".jpg,.jpeg,.png,.webp"
+    >
+
+    @error('image_file')
+        <div class="invalid-feedback">
+            {{ $message }}
+        </div>
+    @enderror
+
+    <div class="form-text">
+        JPG, JPEG, PNG or WEBP. Maximum size: 2 MB.
+    </div>
+
+</div>
 
 
                     <div class="col-12">
